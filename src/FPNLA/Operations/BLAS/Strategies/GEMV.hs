@@ -8,11 +8,11 @@ module FPNLA.Operations.BLAS.Strategies.GEMV (
 ) where
 
 import           FPNLA.Matrix                (asColumn_vm, toCols_vm)
-import           FPNLA.Operations.BLAS       (GEMM (gemm), GEMV (gemv))
+import           FPNLA.Operations.BLAS       (Elt(), GEMM (gemm), GEMV (gemv))
 import           FPNLA.Operations.Parameters (ResM, TransType (..), blasResultV,
                                               getResultDataM)
 
-instance (GEMM s m v e) => GEMV s m v e where
+instance (Elt e, GEMM s m v e) => GEMV s m v e where
     gemv strat tmA vB alpha beta vC =
         blasResultV . head . toCols_vm. getResultDataM $
             call_gemm tmA pmB alpha beta pmC

@@ -21,6 +21,8 @@ import           FPNLA.Operations.Parameters                (Elt, TransType (NoT
                                                              unTransT,
                                                              unTriangT)
 
+import          Debug.Trace                                 (trace)
+
 forwardElim :: (Elt e, MatrixVector m v e) => e -> TransType (UnitType (m e)) -> v e -> v e
 forwardElim alpha pmA vB = fromList_v res
     where
@@ -36,6 +38,7 @@ forwardElim alpha pmA vB = fromList_v res
                   ind_v = ind
                   eqr = cr - i -- Cantidad de ecuaciones resueltas
                   v_ind = alpha * elem_v ind_v vB
+                  sumValues _ [] = trace "forwardElim" undefined
                   sumValues j (x:xs)
                       | j < eqr = x * elemTransUnit_m ind j pmA + sumValues (j+1) xs
                       | otherwise = 0
@@ -44,7 +47,7 @@ backwardElim :: (Elt e, MatrixVector m v e) => e -> TransType (UnitType (m e)) -
 backwardElim alpha pmA vB = fromList_v $ reverse res
     where
         cr = fst . dimTransUnit_m $ pmA -- Cantidad de ecuaciones
-        res = solve cr -- Usada para la evaluaci√≥n perezosa
+        res = solve cr -- Usada para la evaluaci√>=n perezosa
         solve 0 = []
         solve i = calcX i : solve (i-1)
         calcX i -- Calcula el elemento X_[cr - i]
@@ -54,6 +57,7 @@ backwardElim alpha pmA vB = fromList_v $ reverse res
                   ind = i - 1 -- Indice real
                   eqr = cr - i -- Cantidad de ecuaciones resueltas
                   v_ind = alpha * elem_v ind vB
+                  sumValues _ [] = trace "backwardElim" undefined
                   sumValues j (x:xs)
                       | j > cr - 1 - eqr = x * elemTransUnit_m ind j pmA + sumValues (j-1) xs
                       | otherwise = 0

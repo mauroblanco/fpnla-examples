@@ -1,57 +1,59 @@
 {-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE OverlappingInstances  #-}
+{-# LANGUAGE PackageImports        #-}
 
-module FPNLA.Matrix.Instances.HMatrix () where
+module FPNLA.Matrix.Instances.HMatrix (buildVector, buildMatrix) where
 
-import           Control.DeepSeq             (NFData (rnf))
-import           Control.Parallel.Strategies (rseq, withStrategy)
-import qualified Data.Packed.Matrix          as HM (Element, Matrix,
-                                                    buildMatrix, cols,
-                                                    fromBlocks, fromColumns,
-                                                    mapMatrix, rows, subMatrix,
-                                                    toBlocksEvery, toColumns,
-                                                    toRows, trans, (><), (@@>))
-import qualified Data.Packed.Vector          as HV (Vector, buildVector, dim,
-                                                    foldVector, fromList, join,
-                                                    mapVector, zipVectorWith,
-                                                    (@>))
-import           FPNLA.Matrix                (Matrix (generate_m, fromList_m, transpose_m, dim_m, elem_m, subMatrix_m, fromBlocks_m, toBlocks_m, map_m), MatrixVector (fromCols_vm, toCols_vm, row_vm, col_vm), Vector (generate_v, fromList_v, concat_v, elem_v, length_v, foldr_v, map_v, zipWith_v))
+import           Control.DeepSeq               (NFData (rnf))
+import           Control.Parallel.Strategies   (rseq, withStrategy)
+import "hmatrix" Numeric.LinearAlgebra hiding  (Matrix, Vector)
+--import           Numeric.LinearAlgebra.HMatrix
+--import "hmatrix" Numeric.LinearAlgebra         (buildVector)
+import           Numeric.LinearAlgebra.HMatrix hiding (Matrix, Vector)
+import qualified Numeric.LinearAlgebra.HMatrix  as HM (Matrix, Vector)
+import           FPNLA.Matrix                  (Matrix (generate_m, fromList_m, transpose_m, dim_m, elem_m, subMatrix_m, fromBlocks_m, toBlocks_m, map_m), MatrixVector (fromCols_vm, toCols_vm, row_vm, col_vm), Vector (generate_v, fromList_v, concat_v, elem_v, length_v, foldr_v, map_v, zipWith_v))
 {-
-instance (NFData e) => NFData (HV.Vector e) where
+instance (NFData e) => NFData (Vector e) where
     -- Asumo que Vector es estricto
     -- http://haskell.1045720.n5.nabble.com/NFData-instance-for-Numeric-LinearAlgebra-Matrix-td4265725.html
     rnf v = (withStrategy rseq v) `seq` ()
 
-instance (NFData e) => NFData (HM.Matrix e) where
+instance (NFData e) => NFData (Matrix e) where
     -- Matrix es estricto
     -- http://haskell.1045720.n5.nabble.com/NFData-instance-for-Numeric-LinearAlgebra-Matrix-td4265725.html
     rnf m = withStrategy rseq m `seq` ()
 -}
-instance (HM.Element e) => Vector HV.Vector e where
-    generate_v = HV.buildVector
-    fromList_v = HV.fromList
-    concat_v = HV.join
-    elem_v pos v = v HV.@> pos
-    length_v = HV.dim
-    foldr_v = HV.foldVector
-    map_v = HV.mapVector
-    zipWith_v = HV.zipVectorWith
 
-instance (HM.Element e) => Matrix HM.Matrix e where
-    generate_m rows cols gen = HM.buildMatrix rows cols (uncurry gen)
-    fromList_m = (HM.><)
-    transpose_m = HM.trans
-    dim_m m = (HM.rows m, HM.cols m)
-    elem_m i j m = m HM.@@> (i, j)
-    map_m = HM.mapMatrix
+buildVector :: Int -> (Int -> e) -> HM.Vector e
+buildVector size f = undefined
+
+buildMatrix :: Int -> Int -> (Int -> Int -> e) -> HM.Matrix e
+buildMatrix rows cols f = undefined
+
+instance (Element e) => Vector HM.Vector e where
+    generate_v = buildVector
+    fromList_v = fromList
+    concat_v = undefined -- joinsas
+    elem_v pos v = undefined -- v @> pos
+    length_v = undefined -- dim
+    foldr_v = undefined -- foldVector
+    map_v = undefined -- mapVector
+    zipWith_v = undefined -- zipVectorWith
+
+instance (Element e) => Matrix HM.Matrix e where
+    generate_m = buildMatrix
+    fromList_m = (><)
+    transpose_m = undefined -- trans
+    dim_m m = (rows m, cols m)
+    elem_m i j m = undefined -- m @@> (i, j)
+    map_m = undefined -- mapMatrix
     --zipWith_m
-    subMatrix_m posI posJ cantRows cantCols = HM.subMatrix (posI, posJ) (cantRows, cantCols)
-    fromBlocks_m = HM.fromBlocks
-    toBlocks_m = HM.toBlocksEvery
+    subMatrix_m posI posJ cantRows cantCols = subMatrix (posI, posJ) (cantRows, cantCols)
+    fromBlocks_m = fromBlocks
+    toBlocks_m = toBlocksEvery
 
-instance (HM.Element e) => MatrixVector HM.Matrix HV.Vector e where
-    row_vm pos m = HM.toRows m !! pos
-    col_vm pos m = HM.toColumns m !! pos
-    fromCols_vm = HM.fromColumns
-    toCols_vm = HM.toColumns
+instance (Element e) => MatrixVector HM.Matrix HM.Vector e where
+    row_vm pos m = toRows m !! pos
+    col_vm pos m = toColumns m !! pos
+    fromCols_vm = fromColumns
+    toCols_vm = toColumns

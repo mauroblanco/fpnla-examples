@@ -27,7 +27,6 @@ import           FPNLA.Operations.BLAS                        (GEMM (gemm),
                                                                TRSM (trsm))
 import           FPNLA.Operations.LAPACK                      (POTRF (potrf))
 import           FPNLA.Operations.LAPACK.Strategies.DataTypes (CholLLVBlocksPar_Repa,
-                                                               SqrBlockContext,
                                                                getSqrBlockDim)
 import           FPNLA.Operations.Parameters                  (Elt, ResM,
                                                                TransType (..),
@@ -45,9 +44,7 @@ import           Data.Array.Repa.Repr.Unboxed                 (Unbox)
 
 import           Control.DeepSeq                              (NFData)
 
---import Debug.Trace
-
---trace' s a = trace (s ++ ": " ++ (show a)) a
+import           Debug.Trace                                  (trace)
 
 instance (Elt e, Unbox e, NFData e,
          MatrixVector RepaMatrix RepaVector e,
@@ -56,6 +53,7 @@ instance (Elt e, Unbox e, NFData e,
          GEMM gemms RepaMatrix RepaVector e,
          TRSM trsms RepaMatrix RepaVector e) =>
          POTRF (CholLLVBlocksPar_Repa syrks gemms trsms potrfs) RepaMatrix RepaVector e where
+    potrf _ (Upper _) = trace "potrf" undefined
     potrf ctx (Lower mA)
         =  blasResultM $ chol_blk_l ctx 0 mA (generate_m 0 0 undefined)
         where
@@ -123,7 +121,7 @@ concatByCol_m :: (Unbox e, Matrix RepaMatrix e) => RepaMatrix e -> RepaMatrix e 
 concatByCol_m !m1 !m2 = let rows_m1 = cantRows_m m1
                             cols_m1 = cantCols_m m1
                             rows_m2 = cantRows_m m2
-                            cols_m2 = cantCols_m m2
+                            _       = cantCols_m m2
                         in generate_m (rows_m1 + rows_m2) cols_m1
                                       (\i j -> iif (i >= rows_m1) (elem_m (i - rows_m1) j m2)
                                                                   (elem_m i j m1))

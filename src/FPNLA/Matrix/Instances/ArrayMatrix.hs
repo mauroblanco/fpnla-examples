@@ -1,6 +1,5 @@
 {-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE OverlappingInstances  #-}
 
 module FPNLA.Matrix.Instances.ArrayMatrix (
     ArrayMatrix(ArrayMatrix),

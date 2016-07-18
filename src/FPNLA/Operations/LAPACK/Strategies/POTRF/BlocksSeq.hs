@@ -22,7 +22,6 @@ import           FPNLA.Operations.BLAS                        (GEMM (gemm),
                                                                TRSM (trsm))
 import           FPNLA.Operations.LAPACK                      (POTRF (potrf))
 import           FPNLA.Operations.LAPACK.Strategies.DataTypes (CholLLVBlocksSeq,
-                                                               SqrBlockContext,
                                                                getSqrBlockDim)
 import           FPNLA.Operations.Parameters                  (Elt, ResM,
                                                                TransType (..),
@@ -32,13 +31,12 @@ import           FPNLA.Operations.Parameters                  (Elt, ResM,
                                                                getResultDataM)
 import           FPNLA.Utils                                  (iif)
 
---import Debug.Trace
-
---trace' s a = trace (s ++ ": " ++ (show a)) a
+import           Debug.Trace                                  (trace)
 
 instance (Elt e, MatrixVector m v e, POTRF potrfs m v e, SYRK syrks m v e,
          GEMM gemms m v e, TRSM trsms m v e) =>
          POTRF (CholLLVBlocksSeq syrks gemms trsms potrfs) m v e where
+    potrf _ (Upper _) = trace "potrf" undefined
     potrf ctx (Lower mA)
         =  blasResultM $ chol_blk_l ctx 0 mA (generate_m 0 0 undefined)
         where

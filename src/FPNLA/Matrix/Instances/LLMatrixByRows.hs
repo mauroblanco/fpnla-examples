@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE OverlappingInstances  #-}
 {-# LANGUAGE TypeFamilies          #-}
+{-# LANGUAGE FlexibleContexts      #-}
 
 module FPNLA.Matrix.Instances.LLMatrixByRows (
     LVector(LVector),

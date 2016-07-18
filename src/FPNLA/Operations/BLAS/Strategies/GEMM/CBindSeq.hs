@@ -39,7 +39,7 @@ ioGemm :: (Matrix m a, Matrix m1 a,
              Matrix m2 a, Matrix m3 a, Elt a, BLAS3 a,
              NFData (m3 a)) =>
             Trans -> Trans -> Int -> Int -> Int
-            -> a -> m a -> m1 a -> a -> m2 a 
+            -> a -> m a -> m1 a -> a -> m2 a
             -> Int -> Int -> Int -> m3 a
 ioGemm ttA ttB m n k alfa mA mB beta mC ldA ldB ldC= unsafePerformIO $ do
         mAptr <- matrixToPtr mA

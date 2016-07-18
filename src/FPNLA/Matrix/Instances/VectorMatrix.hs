@@ -1,6 +1,6 @@
 {-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE OverlappingInstances  #-}
+{-# LANGUAGE FlexibleContexts      #-}
 
 module FPNLA.Matrix.Instances.VectorMatrix (
     VVector,

@@ -1,6 +1,5 @@
 {-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE OverlappingInstances  #-}
 {-# LANGUAGE TypeOperators         #-}
 
 module FPNLA.Matrix.Instances.AccMatrix (
@@ -39,17 +38,17 @@ instance (Elt e) => Show (AccVector e) where
     show (AccVector m) = show m
 
 instance (Elt e) => Vector AccVector e where
-    generate_v size gen = trace "generate_v" undefined
+    generate_v _ _ = trace "generate_v" undefined
     fromList_v l = AccVector . use $ fromList (Z:.(length l)) l
-    concat_v l = trace "concat_v" undefined
-    elem_v pos v = trace "elem_v" undefined
-    length_v v = trace "length_v" undefined
-    foldr_v cons zero v = trace "foldr_v" undefined
+    concat_v _ = trace "concat_v" undefined
+    elem_v _ _ = trace "elem_v" undefined
+    length_v _ = trace "length_v" undefined
+    foldr_v _ _ _ = trace "foldr_v" undefined
     map_v = trace "map_v" undefined
     zipWith_v = trace "zipWith_v" undefined
 
 instance (Elt e) => Matrix AccMatrix e where
-    generate_m rows cols gen = trace "generate_m" undefined
+    generate_m _ _ _ = trace "generate_m" undefined
     fromList_m m n l = AccMatrix . use $ fromList (Z:.m:.n) l
     transpose_m = trace "transpose_m" undefined
     dim_m (AccMatrix m) = (rows, cols)
@@ -57,12 +56,12 @@ instance (Elt e) => Matrix AccMatrix e where
     elem_m i j (AccMatrix m) = A.indexArray (R.run m) (Z:.i:.j)
     map_m = trace "map_m" undefined
     zipWith_m = trace "zipWith_m" undefined
-    subMatrix_m posI posJ cantRows cantCols = trace "subMatrix_m" undefined
+    subMatrix_m _ _ _ _ = trace "subMatrix_m" undefined
     fromBlocks_m = trace "fromBlocks_m" undefined
     toBlocks_m = trace "toBlocks_m" undefined
 
 instance (Elt e) => MatrixVector AccMatrix AccVector e  where
-    row_vm pos m = trace "row_vm" undefined
-    col_vm pos m = trace "col_vm" undefined
+    row_vm _ _ = trace "row_vm" undefined
+    col_vm _ _ = trace "col_vm" undefined
     fromCols_vm = trace "fromCols_vm" undefined
     toCols_vm = trace "toCols_vm" undefined

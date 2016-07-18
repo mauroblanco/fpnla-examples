@@ -27,9 +27,9 @@ description:
     .
     - Haskell lists <http://hackage.haskell.org/package/base-4.6.0.1/docs/Data-List.html>
     .
-    Operations are parallelized using the @parallel@ framework (<http://hackage.haskell.org/package/parallel>), @Monad-Par@ (<http://hackage.haskell.org/package/monad-par>), @Repa@ (<http://hackage.haskell.org/package/repa>) and @Accelerate@ (<http://hackage.haskell.org/package/accelerate>). 
+    Operations are parallelized using the @parallel@ framework (<http://hackage.haskell.org/package/parallel>), @Monad-Par@ (<http://hackage.haskell.org/package/monad-par>), @Repa@ (<http://hackage.haskell.org/package/repa>) and @Accelerate@ (<http://hackage.haskell.org/package/accelerate>).
     .
-    Details about the package may be found in the paper: Towards a functional run-time for dense NLA domain. In Proceedings of the 2Nd ACM SIGPLAN Workshop on 
+    Details about the package may be found in the paper: Towards a functional run-time for dense NLA domain. In Proceedings of the 2Nd ACM SIGPLAN Workshop on
     Functional High-performance Computing. New York, NY, USA. ACM, pages 85-96 (<http://www.fing.edu.uy/~mviera/papers/fhpc13.pdf>).
     .
 tested-with:    GHC==7.6.3
@@ -41,7 +41,7 @@ copyright:      Universidad de la República, Uruguay
 
 library
   hs-source-dirs:   src
-  build-depends:    
+  build-depends:
                    base >= 4 && < 5,
                    deepseq >= 1.3.0.1,
                    accelerate >= 0.13.0.5,
@@ -54,7 +54,7 @@ library
                    linear-algebra-cblas,
                    monad-par >= 0.3.4.2
   ghc-options:      -Wall -fno-warn-orphans -fno-warn-name-shadowing
-  exposed-modules:  
+  exposed-modules:
                    FPNLA.Matrix.Instances.AccMatrix,
                    FPNLA.Matrix.Instances.ArrayMatrix,
                    FPNLA.Matrix.Instances.HMatrix,
@@ -97,60 +97,60 @@ library
                    FPNLA.Operations.Utils,
                    FPNLA.Utils
 
-test-suite test-fpnla-blas
-  type:            exitcode-stdio-1.0
-  ghc-options:     -Wall -rtsopts -fno-warn-orphans
-  build-depends:   base >= 4, 
-                   HUnit >= 1.2 && < 2, 
-                   QuickCheck >= 2.4, 
-                   test-framework >= 0.4.1, 
-                   test-framework-quickcheck2, 
-                   test-framework-hunit,
-                   data-default,
-                   tagged,
-                   time,
-                   random,
-                   fpnla,
-                   fpnla-examples,  
-                   deepseq,
-                   accelerate,
-                   array,
-                   parallel,
-                   hmatrix,
-                   repa,
-                   vector,
-                   linear-algebra-cblas,
-                   monad-par
-  hs-source-dirs:  src-test
-  main-is:         TestBLAS.hs
-  extra-lib-dirs:  /usr/lib
-  other-modules:   TestBase
-
-test-suite test-fpnla-lapack
-  type:            exitcode-stdio-1.0
-  ghc-options:     -Wall -rtsopts -fno-warn-orphans
-  build-depends:   base >= 4, 
-                   HUnit >= 1.2 && < 2, 
-                   QuickCheck >= 2.4, 
-                   test-framework >= 0.4.1, 
-                   test-framework-quickcheck2, 
-                   test-framework-hunit,
-                   data-default,
-                   tagged,
-                   time,
-                   random,
-                   fpnla,
-                   fpnla-examples,  
-                   deepseq,
-                   accelerate,
-                   array,
-                   parallel,
-                   hmatrix,
-                   repa,
-                   vector,
-                   linear-algebra-cblas,
-                   monad-par
-  hs-source-dirs:  src-test
-  main-is:         TestLAPACK.hs
-  extra-lib-dirs:  /usr/lib
-  other-modules:   TestBase
+--test-suite test-fpnla-blas
+--  type:            exitcode-stdio-1.0
+--  ghc-options:     -Wall -rtsopts -fno-warn-orphans
+--  build-depends:   base >= 4,
+--                   HUnit >= 1.2 && < 2,
+--                   QuickCheck >= 2.4,
+--                   test-framework >= 0.4.1,
+--                   test-framework-quickcheck2,
+--                   test-framework-hunit,
+--                   data-default,
+--                   tagged,
+--                   time,
+--                   random,
+--                   fpnla,
+--                   fpnla-examples,
+--                   deepseq,
+--                   accelerate,
+--                   array,
+--                   parallel,
+--                   hmatrix,
+--                   repa,
+--                   vector,
+--                   linear-algebra-cblas,
+--                   monad-par
+--  hs-source-dirs:  src-test
+--  main-is:         TestBLAS.hs
+--  extra-lib-dirs:  /usr/lib
+--  other-modules:   TestBase
+--
+--test-suite test-fpnla-lapack
+--  type:            exitcode-stdio-1.0
+--  ghc-options:     -Wall -rtsopts -fno-warn-orphans
+--  build-depends:   base >= 4,
+--                   HUnit >= 1.2 && < 2,
+--                   QuickCheck >= 2.4,
+--                   test-framework >= 0.4.1,
+--                   test-framework-quickcheck2,
+--                   test-framework-hunit,
+--                   data-default,
+--                   tagged,
+--                   time,
+--                   random,
+--                   fpnla,
+--                   fpnla-examples,
+--                   deepseq,
+--                   accelerate,
+--                   array,
+--                   parallel,
+--                   hmatrix,
+--                   repa,
+--                   vector,
+--                   linear-algebra-cblas,
+--                   monad-par
+--  hs-source-dirs:  src-test
+--  main-is:         TestLAPACK.hs
+--  extra-lib-dirs:  /usr/lib
+--  other-modules:   TestBase

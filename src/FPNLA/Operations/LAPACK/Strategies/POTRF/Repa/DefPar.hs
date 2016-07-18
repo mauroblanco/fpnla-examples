@@ -43,15 +43,14 @@ import           Data.Array.Repa.Repr.Unboxed                 (Unbox)
 
 import           Control.DeepSeq                              (NFData, deepseq)
 
---import Debug.Trace
-
---trace' s a = trace (s ++ ": " ++ (show a)) a
+import           Debug.Trace                                  (trace)
 
 instance (Elt e, Unbox e, NFData e,
           MatrixVector RepaMatrix RepaVector e,
           DOT dots RepaVector e,
           GEMV gemvs RepaMatrix RepaVector e) =>
           POTRF (CholLLVPar_Repa dots gemvs) RepaMatrix RepaVector e where
+    potrf _ (Upper _) = trace "potrf" undefined
     potrf (dot_ctx, gemv_ctx) (Lower mA)
         =  blasResultM $ chol_l gemv_ctx 0 mA (generate_m 0 0 undefined)
         where
