@@ -15,7 +15,7 @@ import           FPNLA.Matrix                                 (MatrixVector,
                                                                elem_m,
                                                                generate_m,
                                                                transpose_m)
-import           FPNLA.Matrix.Instances.HMatrix
+import           FPNLA.Matrix.Instances.HMatrix               ()
 import           FPNLA.Operations.LAPACK                      (POTRF (potrf))
 import           FPNLA.Operations.LAPACK.Strategies.DataTypes (HMatrixBindSeq)
 import           FPNLA.Operations.Parameters                  (Elt, blasResultM,

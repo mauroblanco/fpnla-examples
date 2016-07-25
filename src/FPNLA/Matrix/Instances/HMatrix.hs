@@ -2,7 +2,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PackageImports        #-}
 
-module FPNLA.Matrix.Instances.HMatrix (buildVector, buildMatrix) where
+module FPNLA.Matrix.Instances.HMatrix () where
 
 import           Control.DeepSeq               (NFData (rnf))
 import           Control.Parallel.Strategies   (rseq, withStrategy)

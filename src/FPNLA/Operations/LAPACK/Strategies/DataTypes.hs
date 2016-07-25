@@ -9,22 +9,14 @@ module FPNLA.Operations.LAPACK.Strategies.DataTypes (
     CholLLVBlocksPar_Repa,
     CholLLVSeq,
     CholLLVPar_Repa,
-
     NullContext,
-
-    SqrBlockContext,
-    getSqrBlockDim,
-
-    newNullContext,
-    newSqrBlockContext,
+    SqrBlockContext(..)
 
 ) where
 
 
 import           FPNLA.Operations.Parameters                (StratCtx)
-
--- TODO:Ver como sacar esto!!
-import           FPNLA.Operations.BLAS.Strategies.DataTypes
+import           FPNLA.Operations.Utils (NullContext, SqrBlockContext(..))
 
 data HMatrixBindSeq
 

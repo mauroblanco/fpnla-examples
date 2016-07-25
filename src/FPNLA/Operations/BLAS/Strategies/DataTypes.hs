@@ -23,40 +23,24 @@ module FPNLA.Operations.BLAS.Strategies.DataTypes (
     DefPar_Acc,
     DefPar_AccGen,
 
-    NullContext,
-    BlockContext(getBlockDim),
-    SqrBlockContext(getSqrBlockDim),
     StrassenContext(getStrassenLimit),
 
-    newNullContext,
-    newBlockContext,
-    newSqrBlockContext,
     newStrassenContext,
+
+    NullContext,
+    BlockContext(..),
+    SqrBlockContext(..)
+
 ) where
 
 import           FPNLA.Operations.Parameters (StratCtx)
+import           FPNLA.Operations.Utils (NullContext, BlockContext(..), SqrBlockContext(..))
 
 -- Contextos:
-data NullContext = NullContext deriving (Show)
-data BlockContext = BlockContext {
-        getBlockDim :: (Int, Int)
-    } deriving (Show)
-data SqrBlockContext = SqrBlockContext {
-        getSqrBlockDim :: Int
-    } deriving (Show)
 data StrassenContext = StrassenContext {
         getStrassenExponentialLimit :: Int,
         getStrassenLimit            :: Int
     } deriving (Show)
-
-newNullContext :: NullContext
-newNullContext = NullContext
-
-newBlockContext :: Int -> Int -> BlockContext
-newBlockContext m n = BlockContext { getBlockDim = (m,n) }
-
-newSqrBlockContext :: Int -> SqrBlockContext
-newSqrBlockContext d = SqrBlockContext { getSqrBlockDim = d }
 
 newStrassenContext :: Int -> StrassenContext
 newStrassenContext e = StrassenContext { getStrassenExponentialLimit = e, getStrassenLimit = 2 ^ e }

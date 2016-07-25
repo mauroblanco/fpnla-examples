@@ -1,3 +1,4 @@
+{-# LANGUAGE TypeFamilies          #-}
 
 module FPNLA.Operations.Utils (
     matrixToPtr,
@@ -6,6 +7,12 @@ module FPNLA.Operations.Utils (
     triangToForeign,
     unitToForeign,
     unsafePerformIO,
+    NullContext(),
+    newNullContext,
+    BlockContext(getBlockDim),
+    newBlockContext,
+    SqrBlockContext(getSqrBlockDim),
+    newSqrBlockContext
 ) where
 
 import FPNLA.Matrix (Matrix(dim_m, elem_m, generate_m))
@@ -17,6 +24,23 @@ import Foreign.Ptr (Ptr)
 import System.IO.Unsafe (unsafePerformIO)
 
 import qualified Foreign.BLAS as L3 (Trans(ConjTrans, NoTrans, Trans), Uplo(Lower, Upper), Diag(Unit, NonUnit))
+
+data NullContext = NullContext deriving (Show)
+newNullContext :: NullContext
+newNullContext = NullContext
+
+data BlockContext = BlockContext {
+        getBlockDim :: (Int, Int)
+    } deriving (Show)
+
+newBlockContext :: Int -> Int -> BlockContext
+newBlockContext m n = BlockContext { getBlockDim = (m,n) }
+
+data SqrBlockContext = SqrBlockContext {
+        getSqrBlockDim :: Int
+    } deriving (Show)
+newSqrBlockContext :: Int -> SqrBlockContext
+newSqrBlockContext d = SqrBlockContext { getSqrBlockDim = d }
 
 -- ----------------------------------------------------------------------------
 -- CBind:
@@ -41,3 +65,4 @@ triangToForeign (Upper _) = L3.Upper
 unitToForeign :: UnitType t -> L3.Diag
 unitToForeign (Unit _) = L3.Unit
 unitToForeign (NoUnit _) = L3.NonUnit
+
