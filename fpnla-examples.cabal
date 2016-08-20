@@ -63,6 +63,7 @@ library
         FPNLA.Operations.BLAS.Strategies.GEMM.Strategies.BlocksPar
         FPNLA.Operations.BLAS.Strategies.GEMM.Strategies.DefPar
         FPNLA.Operations.BLAS.Strategies.GEMM.Strategies.StrassenPar
+        FPNLA.Operations.BLAS.Strategies.GEMM_M.DefSeq
         FPNLA.Operations.BLAS.Strategies.GEMM_M.MonadPar.DefPar
         FPNLA.Operations.BLAS.Strategies.GEMV
         FPNLA.Operations.BLAS.Strategies.SYRK.DefSeq
@@ -94,7 +95,7 @@ library
         vector >=0.10.0.1,
         linear-algebra-cblas -any,
         monad-par >=0.3.4.2,
-        primitive
+        primitive -any
     hs-source-dirs: src
     ghc-options: -Wall -fno-warn-orphans -fno-warn-name-shadowing
 
