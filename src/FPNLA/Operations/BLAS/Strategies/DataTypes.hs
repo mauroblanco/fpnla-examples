@@ -10,6 +10,8 @@ module FPNLA.Operations.BLAS.Strategies.DataTypes (
     BlocksSeq,
     StrassenSeq,
 
+    DefPar_FIO,
+
     DefPar_ST,
     ColsPar_ST,
     StrassenPar_ST,
@@ -53,6 +55,9 @@ data BlocksByCols gs ts
 data BlocksByRows gs ts
 data StrassenSeq gs
 
+-- ForkIO
+data DefPar_FIO
+
 -- Strategies
 data DefPar_ST
 data ColsPar_ST s
@@ -74,6 +79,8 @@ type instance StratCtx (BlocksByCols gs ts) = (SqrBlockContext, StratCtx gs, Str
 type instance StratCtx (BlocksByRows gs ts) = (SqrBlockContext, StratCtx gs, StratCtx ts)
 type instance StratCtx (BlocksSeq gs) = (BlockContext, StratCtx gs)
 type instance StratCtx (StrassenSeq gs)= (StrassenContext, StratCtx gs)
+
+type instance StratCtx DefPar_FIO = NullContext
 
 type instance StratCtx DefPar_ST = NullContext
 type instance StratCtx (ColsPar_ST s) = StratCtx s

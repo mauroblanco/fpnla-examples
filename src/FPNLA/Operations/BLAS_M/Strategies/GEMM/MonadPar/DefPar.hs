@@ -3,24 +3,25 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE ScopedTypeVariables   #-}
 
-module FPNLA.Operations.BLAS.Strategies.GEMM_M.MonadPar.DefPar () where
+module FPNLA.Operations.BLAS_M.Strategies.GEMM.MonadPar.DefPar () where
 
-import           Control.DeepSeq                            (NFData)
-import           Control.Monad.Par                          as MP (Par, parMap)
 import           FPNLA.Matrix_M
 import           FPNLA.Operations.BLAS_M
 import           FPNLA.Operations.BLAS.Strategies.DataTypes (DefPar_MP)
 import           FPNLA.Operations.Parameters                (Elt, blasResultM,
                                                              TransType(..))
 
-import Control.Concurrent.MVar
-import Control.Concurrent
-import Control.Exception
-import Control.Monad (foldM)
+import           Control.DeepSeq                            (rnf, NFData)
+import           Control.Exception                          (evaluate)
+import           Control.Monad                              (foldM)
+import           Control.Monad.Par.IO                       (runParIO)
+import           Control.Monad.IO.Class                     (liftIO)
+import           Control.Monad.Par.Combinator               (parMapM)
 
 --import Debug.Trace (trace)
 
-instance (Elt e, Matrix IO m e, Vector IO v e, RowMatrixVector IO m v e) => GEMM_M IO DefPar_MP m v e where
+instance (NFData e, Elt e, Matrix IO m e, Vector IO v e, RowMatrixVector IO m v e) =>
+    GEMM_M IO DefPar_MP m v e where
     gemm_m _ (NoTrans mA) (Trans mB) alpha beta mC =
         do
             (_, _) <- dim_m mA
@@ -31,21 +32,19 @@ instance (Elt e, Matrix IO m e, Vector IO v e, RowMatrixVector IO m v e) => GEMM
                             maIX <- elem_m i x mA
                             mbXJ <- elem_m j x mB
                             let res = r + maIX * mbXJ
-                            _ <- evaluate res
+                            _ <- evaluate . rnf $ res
                             return res) 0 [0 .. p - 1]
             rows :: [v e] <- toRows_vm mC
-            mvars <- traverse (\(r, i) -> do
-                done <- newEmptyMVar
-                _ <- forkIO (do
-                    v' <- update_v (\j ->
+            let f (row, i) = do
+                    _ <- update_v (\j ->
                         do
                             multIJ <- matMultIJ i j
                             mcIJ <- elem_m i j mC
-                            return $ alpha * multIJ + beta * mcIJ) r
-                    _ <- evaluate v'
-                    putMVar done ()
-                    return ())
-                return done) $ zip rows [0 .. ]
-            _ <- traverse takeMVar mvars
+                            let res = alpha * multIJ + beta * mcIJ
+                            _ <- evaluate . rnf $ res
+                            return res) row
+                    return ()
+            _ <- runParIO . parMapM (liftIO . f) $ zip rows [0 .. ]
             return $ blasResultM mC
     gemm_m _ _ _ _ _ _ = error "TODO!"
+
