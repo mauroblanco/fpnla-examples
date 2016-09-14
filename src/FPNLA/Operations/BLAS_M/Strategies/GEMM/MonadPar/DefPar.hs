@@ -5,18 +5,22 @@
 
 module FPNLA.Operations.BLAS_M.Strategies.GEMM.MonadPar.DefPar () where
 
-import           FPNLA.Matrix_M
-import           FPNLA.Operations.BLAS_M
-import           FPNLA.Operations.BLAS.Strategies.DataTypes (DefPar_MP)
-import           FPNLA.Operations.Parameters                (Elt, blasResultM,
-                                                             TransType(..))
 
-import           Control.DeepSeq                            (rnf, NFData)
-import           Control.Exception                          (evaluate)
-import           Control.Monad                              (foldM)
-import           Control.Monad.Par.IO                       (runParIO)
-import           Control.Monad.IO.Class                     (liftIO)
-import           Control.Monad.Par.Combinator               (parMapM)
+import           FPNLA.Matrix_M                                (Matrix(dim_m, elem_m),
+                                                               Vector(update_v),
+                                                               RowMatrixVector(toRows_vm))
+import           FPNLA.Operations.BLAS_M                       (GEMM_M(gemm_m))
+import           FPNLA.Operations.BLAS_M.Strategies.GEMM.Utils (asTrans, asNoTrans)
+import           FPNLA.Operations.BLAS.Strategies.DataTypes    (DefPar_MP)
+import           FPNLA.Operations.Parameters                   (Elt, blasResultM,
+                                                               TransType(..))
+
+import           Control.DeepSeq                               (rnf, NFData)
+import           Control.Exception                             (evaluate)
+import           Control.Monad                                 (foldM)
+import           Control.Monad.Par.IO                          (runParIO)
+import           Control.Monad.IO.Class                        (liftIO)
+import           Control.Monad.Par.Combinator                  (parMapM)
 
 --import Debug.Trace (trace)
 
@@ -46,5 +50,10 @@ instance (NFData e, Elt e, Matrix IO m e, Vector IO v e, RowMatrixVector IO m v 
                     return ()
             _ <- runParIO . parMapM (liftIO . f) $ zip rows [0 .. ]
             return $ blasResultM mC
-    gemm_m _ _ _ _ _ _ = error "TODO!"
+    gemm_m ctx mtA mtB alpha beta mC =
+        do
+            mA <- asNoTrans mtA
+            mB <- asTrans mtB
+            gemm_m ctx (NoTrans mA) (Trans mB) alpha beta mC
+
 

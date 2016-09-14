@@ -5,17 +5,18 @@
 
 module FPNLA.Operations.BLAS_M.Strategies.GEMM.DefSeq () where
 
-import           FPNLA.Matrix_M                             (Matrix(dim_m, elem_m, update_m),
-                                                            Vector(),
-                                                            RowMatrixVector())
-import           FPNLA.Operations.BLAS_M                    (GEMM_M(gemm_m))
-import           FPNLA.Operations.BLAS.Strategies.DataTypes (DefSeq)
-import           FPNLA.Operations.Parameters                (Elt, blasResultM,
-                                                             TransType(..))
+import           FPNLA.Matrix_M                                (Matrix(dim_m, elem_m, update_m),
+                                                               Vector(),
+                                                               RowMatrixVector())
+import           FPNLA.Operations.BLAS_M                       (GEMM_M(gemm_m))
+import           FPNLA.Operations.BLAS_M.Strategies.GEMM.Utils (asTrans, asNoTrans)
+import           FPNLA.Operations.BLAS.Strategies.DataTypes    (DefSeq)
+import           FPNLA.Operations.Parameters                   (Elt(..), blasResultM,
+                                                               TransType(..))
 
-import           Control.DeepSeq                            (NFData, rnf)
-import           Control.Exception                          (evaluate)
-import           Control.Monad                              (foldM)
+import           Control.DeepSeq                               (NFData, rnf)
+import           Control.Exception                             (evaluate)
+import           Control.Monad                                 (foldM)
 
 --import Debug.Trace (trace)
 
@@ -40,4 +41,8 @@ instance (NFData e, Elt e, Matrix IO m e, Vector IO v e, RowMatrixVector IO m v 
                     let res = alpha * multIJ + beta * mcIJ
                     _ <- evaluate . rnf $ res
                     return res) mC
-    gemm_m _ _ _ _ _ _ = error "TODO!"
+    gemm_m ctx mtA mtB alpha beta mC =
+        do
+            mA <- asNoTrans mtA
+            mB <- asTrans mtB
+            gemm_m ctx (NoTrans mA) (Trans mB) alpha beta mC

@@ -5,17 +5,21 @@
 
 module FPNLA.Operations.BLAS_M.Strategies.GEMM.Strategies.DefPar () where
 
-import           FPNLA.Matrix_M
-import           FPNLA.Operations.BLAS_M
-import           FPNLA.Operations.BLAS.Strategies.DataTypes (DefPar_ST)
-import           FPNLA.Operations.Parameters                (Elt, blasResultM,
-                                                             TransType(..))
 
-import           Control.DeepSeq                            (rnf)
-import           Control.Exception                          (evaluate)
-import           Control.Monad                              (foldM)
-import           Control.Parallel.Strategies                (parMap, rdeepseq, NFData)
-import           System.IO.Unsafe                           (unsafePerformIO)
+import           FPNLA.Matrix_M                                (Matrix(dim_m, elem_m),
+                                                               Vector(update_v),
+                                                               RowMatrixVector(toRows_vm))
+import           FPNLA.Operations.BLAS_M                       (GEMM_M(gemm_m))
+import           FPNLA.Operations.BLAS_M.Strategies.GEMM.Utils (asTrans, asNoTrans)
+import           FPNLA.Operations.BLAS.Strategies.DataTypes    (DefPar_ST)
+import           FPNLA.Operations.Parameters                   (Elt, blasResultM,
+                                                               TransType(..))
+
+import           Control.DeepSeq                               (rnf)
+import           Control.Exception                             (evaluate)
+import           Control.Monad                                 (foldM)
+import           Control.Parallel.Strategies                   (parMap, rdeepseq, NFData)
+import           System.IO.Unsafe                              (unsafePerformIO)
 
 --import Debug.Trace (trace)
 
@@ -46,5 +50,10 @@ instance (NFData e, Elt e, Matrix IO m e, Vector IO v e, RowMatrixVector IO m v 
             let parResutl = parMap rdeepseq (unsafePerformIO . f) $ zip rows [0 .. ]
             _ <- evaluate . rnf $ parResutl
             return $ blasResultM mC
-    gemm_m _ _ _ _ _ _ = error "TODO!"
+    gemm_m ctx mtA mtB alpha beta mC =
+        do
+            mA <- asNoTrans mtA
+            mB <- asTrans mtB
+            gemm_m ctx (NoTrans mA) (Trans mB) alpha beta mC
+
 

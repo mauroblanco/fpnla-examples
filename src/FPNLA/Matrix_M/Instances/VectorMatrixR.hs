@@ -30,6 +30,15 @@ showVector = fmap show . DV.freeze
 
 instance Vector IO (DVM.MVector RealWorld) e where
 
+    generate_v size f =
+        do
+            v <- DVM.new size
+            _ <- traverse (\i ->
+                do
+                    x <- f i
+                    DVM.write v i x) [0 .. size - 1]
+            return v
+
     fromList_v l =
         do
             v <- DVM.new $ length l
@@ -44,6 +53,9 @@ instance Vector IO (DVM.MVector RealWorld) e where
             return v
 
 instance Matrix IO (VMatrixR RealWorld) e where
+
+
+    generate_m cr cc f = fmap (VMatrixR . DV.fromList) . traverse (generate_v cc . f) $ [0 .. cr - 1]
 
     fromList_m _ n l = fmap (VMatrixR . DV.fromList) . traverse fromList_v $ splitSlice n l
 
